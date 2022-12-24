@@ -4,7 +4,7 @@
 
 {
     "name": "Appointment",
-    "version": "14.0.1.1.2",
+    "version": "14.0.1.1.0",
     "website": "https://simetri-sinergi.id",
     "author": "OpenSynergy Indonesia, PT. Simetri Sinergi Indonesia",
     "license": "LGPL-3",
@@ -13,6 +13,7 @@
     "depends": [
         "ssi_master_data_mixin",
         "ssi_transaction_confirm_mixin",
+        "ssi_transaction_ready_mixin",
         "ssi_transaction_open_mixin",
         "ssi_transaction_done_mixin",
         "ssi_transaction_cancel_mixin",

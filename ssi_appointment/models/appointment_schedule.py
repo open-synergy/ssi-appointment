@@ -10,6 +10,7 @@ class AppointmentSchedule(models.Model):
     _name = "appointment_schedule"
     _inherit = [
         "mixin.transaction_confirm",
+        "mixin.transaction_ready",
         "mixin.transaction_open",
         "mixin.transaction_done",
         "mixin.transaction_cancel",
@@ -19,14 +20,16 @@ class AppointmentSchedule(models.Model):
 
     # Multiple Approval Attribute
     _approval_from_state = "draft"
-    _approval_to_state = "open"
+    _approval_to_state = "ready"
     _approval_state = "confirm"
-    _after_approved_method = "action_open"
+    _after_approved_method = "action_ready"
 
     # Attributes related to add element on view automatically
     _automatically_insert_view_element = True
+    _automatically_insert_ready_policy_fields = False
+    _automatically_insert_ready_button = False
 
-    _statusbar_visible_label = "draft,confirm,open,done"
+    _statusbar_visible_label = "draft,confirm,ready,open,done"
 
     _policy_field_order = [
         "confirm_ok",
@@ -40,6 +43,7 @@ class AppointmentSchedule(models.Model):
     ]
     _header_button_order = [
         "action_confirm",
+        "action_open",
         "action_done",
         "%(ssi_transaction_cancel_mixin.base_select_cancel_reason_action)d",
         "%(ssi_transaction_terminate_mixin.base_select_terminate_reason_action)d",
@@ -50,13 +54,14 @@ class AppointmentSchedule(models.Model):
     _state_filter_order = [
         "dom_draft",
         "dom_confirm",
+        "dom_ready",
         "dom_open",
         "dom_done",
         "dom_terminate",
         "dom_cancel",
     ]
 
-    _create_sequence_state = "open"
+    _create_sequence_state = "ready"
 
     title = fields.Char(
         required=True,
@@ -77,18 +82,6 @@ class AppointmentSchedule(models.Model):
         states={
             "draft": [
                 ("readonly", False),
-            ],
-            "confirm": [
-                ("required", True),
-            ],
-            "approve": [
-                ("required", True),
-            ],
-            "open": [
-                ("required", True),
-            ],
-            "done": [
-                ("required", True),
             ],
         },
     )
@@ -140,18 +133,6 @@ class AppointmentSchedule(models.Model):
                 ("readonly", False),
                 ("required", False),
             ],
-            "confirm": [
-                ("required", True),
-            ],
-            "approve": [
-                ("required", True),
-            ],
-            "open": [
-                ("required", True),
-            ],
-            "done": [
-                ("required", True),
-            ],
         },
     )
     time_slot_id = fields.Many2one(
@@ -171,6 +152,8 @@ class AppointmentSchedule(models.Model):
         copy=False,
         default="online",
         required=True,
+        readonly=True,
+        states={"draft": [("readonly", False)]},
     )
     appointment_invitation_link = fields.Char(
         string="Invitation Link",
@@ -195,9 +178,11 @@ class AppointmentSchedule(models.Model):
         selection=[
             ("draft", "Draft"),
             ("confirm", "Waiting for Approval"),
+            ("ready", "Ready to Start"),
             ("open", "In Progress"),
             ("done", "Done"),
             ("terminate", "Terminate"),
+            ("reject", "Reject"),
             ("cancel", "Cancelled"),
         ],
         copy=False,
