@@ -17,6 +17,7 @@ class AppointmentSchedule(models.Model):
         "mixin.transaction_terminate",
     ]
     _description = "Appointment Schedule"
+    _order = "date, time_slot_id"
 
     # Multiple Approval Attribute
     _approval_from_state = "draft"
