@@ -23,7 +23,8 @@
     <field name="mode">primary</field>
     <field name="arch" type="xml">
         <data>
-            <xpath expr="//field[@name='active']" position="after">
+            <xpath expr="//field[@name='id']" position="before">
+                <field name="sequence" widget="handle" />
             </xpath>
         </data>
     </field>
@@ -39,6 +40,7 @@
             <xpath expr="//field[@name='active']" position="after">
                 <field name="time_start" />
                 <field name="time_end" />
+                <field name="sequence" />
             </xpath>
         </data>
     </field>

@@ -11,7 +11,12 @@ class AppointmentTimeSlot(models.Model):
         "mixin.master_data",
     ]
     _description = "Appointment Time Slot"
+    _order = "sequence, id"
 
+    sequence = fields.Integer(
+        string="Sequence",
+        default=10,
+    )
     time_start = fields.Float(
         string="Start",
         required=True,
