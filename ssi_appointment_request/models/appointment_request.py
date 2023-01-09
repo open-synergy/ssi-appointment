@@ -18,6 +18,7 @@ class AppointmentRequest(models.Model):
         "mixin.transaction_cancel",
     ]
     _description = "Appointment Request"
+    _order = "date"
 
     # Multiple Approval Attribute
     _approval_from_state = "draft"
@@ -217,7 +218,7 @@ class AppointmentRequest(models.Model):
                 criteria = [
                     ("date", ">=", date_min),
                     ("state", "=", "ready"),
-                    ("request_id", "=", False),
+                    ("partner_id", "=", False),
                 ]
                 if document.type_id:
                     criteria.append(
