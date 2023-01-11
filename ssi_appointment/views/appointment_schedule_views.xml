@@ -22,6 +22,29 @@
                 <field name="title" />
                 <field name="appointee_id" />
             </xpath>
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter
+                        name="grp_partner"
+                        string="Contact"
+                        context="{'group_by':'partner_id'}"
+                    />
+                <filter
+                        name="grp_commercial_partner"
+                        string="Commercial Partner"
+                        context="{'group_by':'commercial_partner_id'}"
+                    />
+                <filter
+                        name="grp_type"
+                        string="Type"
+                        context="{'group_by':'type_id'}"
+                    />
+                <filter name="grp_date" string="Date" context="{'group_by':'date'}" />
+                <filter
+                        name="grp_appointee_id"
+                        string="Appointee"
+                        context="{'group_by':'appointee_id'}"
+                    />
+            </xpath>
         </data>
     </field>
 </record>
