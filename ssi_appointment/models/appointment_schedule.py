@@ -9,6 +9,7 @@ from odoo.exceptions import ValidationError
 class AppointmentSchedule(models.Model):
     _name = "appointment_schedule"
     _inherit = [
+        "portal.mixin",
         "mixin.transaction_confirm",
         "mixin.transaction_ready",
         "mixin.transaction_open",

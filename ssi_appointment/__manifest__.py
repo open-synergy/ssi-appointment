@@ -4,7 +4,7 @@
 
 {
     "name": "Appointment",
-    "version": "14.0.1.3.0",
+    "version": "14.0.1.4.0",
     "website": "https://simetri-sinergi.id",
     "author": "OpenSynergy Indonesia, PT. Simetri Sinergi Indonesia",
     "license": "LGPL-3",
@@ -18,6 +18,7 @@
         "ssi_transaction_done_mixin",
         "ssi_transaction_cancel_mixin",
         "ssi_transaction_terminate_mixin",
+        "portal",
     ],
     "data": [
         "security/ir_module_category_data.xml",
@@ -31,6 +32,7 @@
         "views/appointment_type_views.xml",
         "views/appointment_time_slot_views.xml",
         "views/appointment_schedule_views.xml",
+        "views/appointment_schedule_portal_templates.xml",
     ],
     "demo": [
         "demo/appointment_time_slot_demo.xml",
