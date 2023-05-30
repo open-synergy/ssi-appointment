@@ -65,6 +65,8 @@
                 <field name="title" />
                 <field name="type_id" />
                 <field name="appointee_id" widget="many2one_avatar" />
+                <field name="host_id" widget="many2one_avatar" />
+                <field name="co_appointee_ids" />
             </xpath>
         </data>
     </field>
@@ -82,6 +84,8 @@
             <data>
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="appointee_id" widget="many2one_avatar" />
+                    <field name="host_id" widget="many2one_avatar" />
+                    <field name="co_appointee_ids" />
                     <field name="date" />
                     <field name="appointment_method" />
                     <field name="time_slot_id" />

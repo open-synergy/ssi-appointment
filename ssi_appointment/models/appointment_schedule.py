@@ -163,6 +163,19 @@ class AppointmentSchedule(models.Model):
     appointment_video_link = fields.Char(
         string="Video Link",
     )
+    host_id = fields.Many2one(
+        comodel_name="res.users",
+        string="Host",
+        required=False,
+    )
+    co_appointee_ids = fields.Many2many(
+        comodel_name="res.users",
+        string="Co-Appointees",
+        relation="rel_appointment_schedule_2_users",
+        column1="schedule_id",
+        column2="type_id",
+        required=False,
+    )
 
     @api.model
     def _default_date(self):
