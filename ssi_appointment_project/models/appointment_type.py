@@ -19,3 +19,13 @@ class AppointmentType(models.Model):
         string="Task Stage",
         comodel_name="project.task.type",
     )
+    host_id_task_type_id = fields.Many2one(
+        comodel_name="task.type",
+        string="Task Type Host",
+        required=False
+    )
+    co_appointee_task_type_id = fields.Many2one(
+        comodel_name="task.type",
+        string="Task Type Co Appointee",
+        required=False
+    )

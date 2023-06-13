@@ -11,6 +11,8 @@
         <data>
             <xpath expr="//field[@name='active']" position="after">
                 <field name="task_type_id" />
+                <field name="host_id_task_type_id"/>
+                <field name="co_appointee_task_type_id"/>
                 <field name="task_stage_id" />
             </xpath>
         </data>
