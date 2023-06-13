@@ -13,6 +13,8 @@
                 <field name="project_id" />
                 <field name="auto_create_task" />
                 <field name="task_id" />
+                <field name="host_id_task_id"/>
+                <field name="co_appointee_ids_task_id"/>
                 <button
                         name="action_create_task"
                         type="object"
