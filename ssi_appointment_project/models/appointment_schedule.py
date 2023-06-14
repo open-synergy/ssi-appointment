@@ -23,10 +23,12 @@ class AppointmentSchedule(models.Model):
         string="Task",
         comodel_name="project.task",
     )
-    host_id_task_id = fields.Many2one(
-        comodel_name="project.task", string="Task Host", required=False
+    host_task_id = fields.Many2one(
+        comodel_name="project.task",
+        string="Task Host",
+        required=False,
     )
-    co_appointee_ids_task_id = fields.Many2many(
+    co_appointee_task_ids = fields.Many2many(
         comodel_name="project.task",
         string="Co-Appointees Task",
         relation="rel_co_appointees_2_project_task",
@@ -57,6 +59,21 @@ class AppointmentSchedule(models.Model):
         self.write({"task_id": False})
         task.unlink()
 
+    # CREATE TASK FOR APPOINTEE
+    def _prepare_create_task(self):
+        self.ensure_one()
+        return {
+            "name": self.name,
+            "project_id": self.project_id.id,
+            "type_id": self.type_id.task_type_id.id,
+            "user_id": self.appointee_id.id,
+            "timebox_ids": self._get_task_timebox(),
+            "stage_id": self.type_id.task_stage_id
+            and self.type_id.task_stage_id.id
+            or False,
+            "work_estimation": self.type_id.task_type_id.work_estimation,
+        }
+
     def _create_task(self):
         self.ensure_one()
         Task = self.env["project.task"]
@@ -65,6 +82,57 @@ class AppointmentSchedule(models.Model):
 
         task = Task.create(self._prepare_create_task())
         self.write({"task_id": task.id})
+
+    # CREATE TASK FOR HOST
+    def _prepare_create_host(self):
+        self.ensure_one()
+        return {
+            "name": self.name,
+            "project_id": self.project_id.id,
+            "type_id": self.type_id.host_task_type_id.id,
+            "user_id": self.host_id.id,
+            "timebox_ids": self._get_task_timebox(),
+            "stage_id": self.type_id.task_stage_id
+            and self.type_id.task_stage_id.id
+            or False,
+            "work_estimation": self.type_id.host_task_type_id.work_estimation,
+        }
+
+    def _create_host(self):
+        self.ensure_one()
+        Task = self.env["project.task"]
+        if not self.auto_create_task:
+            return True
+
+        task = Task.create(self._prepare_create_host())
+        self.write({"host_task_id": task.id})
+
+    # CREATE TASK FOR CO-APPOINTEES
+    def _prepare_create_co_appointee(self, user_id):
+        self.ensure_one()
+        return {
+            "name": self.name,
+            "project_id": self.project_id.id,
+            "type_id": self.type_id.co_appointee_task_type_id.id,
+            "user_id": user_id,
+            "timebox_ids": self._get_task_timebox(),
+            "stage_id": self.type_id.task_stage_id
+            and self.type_id.task_stage_id.id
+            or False,
+            "work_estimation": self.type_id.co_appointee_task_type_id.work_estimation,
+        }
+
+    def _create_co_appointee(self):
+        self.ensure_one()
+        task_ids = []
+        Task = self.env["project.task"]
+        if not self.auto_create_task:
+            return True
+
+        for co_appointee in self.co_appointee_ids:
+            task = Task.create(self._prepare_create_co_appointee(co_appointee.id))
+            task_ids.append(task.id)
+        self.write({"co_appointee_task_ids": [(6, 0, task_ids)]})
 
     def _get_task_timebox(self):
         self.ensure_one()
@@ -90,62 +158,22 @@ class AppointmentSchedule(models.Model):
 
         return [(6, 0, timeboxes.ids)]
 
-    def _prepare_create_task(self):
-        self.ensure_one()
-        return {
-            "name": self.name,
-            "project_id": self.project_id.id,
-            "type_id": self.type_id.task_type_id.id,
-            "user_id": self.appointee_id.id,
-            "timebox_ids": self._get_task_timebox(),
-            "stage_id": self.type_id.task_stage_id
-            and self.type_id.task_stage_id.id
-            or False,
-            "work_estimation": self.type_id.task_type_id.work_estimation,
-        }
-
-    def _create_host(self):
-        self.ensure_one()
-        Host = self.env["project.task"]
-        if not self.auto_create_task:
-            return True
-        host = Host.create(
-            {
-                "host_id_task_id": self.host_id_task_id.id,
-                "type_id": self.type_id.host_id_task_type_id.id,
-            }
-        )
-        self.write({"host_id_task_id": host.id})
-
     def _delete_host(self):
         self.ensure_one()
-        host = self.host_id_task_id
+        host_task_id = self.host_task_id
 
-        if not host:
+        if not host_task_id:
             return True
 
-        self.write({"host_id_task_id": False})
-        host.unlink()
-
-    def _create_co_appointee(self):
-        self.ensure_one()
-        Co_appointee = self.env["project.task"]
-        if not self.auto_create_task:
-            return True
-        co_appointee = Co_appointee.create(
-            {
-                "co_appointee_ids_task_id": self.co_appointee_ids_task_id.id,
-                "type_id": self.type_id.co_appointee_task_type_id.id,
-            }
-        )
-        self.write({"co_appointee_ids_task_id": co_appointee.id})
+        self.write({"host_task_id": False})
+        host_task_id.unlink()
 
     def _delete_co_appointee(self):
         self.ensure_one()
-        host = self.co_appointee_ids_task_id
+        co_appointee_task_ids = self.co_appointee_task_ids
 
-        if not host:
+        if not co_appointee_task_ids:
             return True
 
-        self.write({"co_appointee_ids_task_id": False})
-        host.unlink()
+        self.write({"co_appointee_task_ids": False})
+        co_appointee_task_ids.unlink()
