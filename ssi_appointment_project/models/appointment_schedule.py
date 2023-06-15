@@ -32,7 +32,7 @@ class AppointmentSchedule(models.Model):
         comodel_name="project.task",
         string="Co-Appointees Task",
         relation="rel_co_appointees_2_project_task",
-        column1="schedule_id",
+        column1="co_appointee_ids",
         column2="task_id",
         required=False,
     )
