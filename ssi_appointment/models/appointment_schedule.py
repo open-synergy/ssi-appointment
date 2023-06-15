@@ -173,7 +173,7 @@ class AppointmentSchedule(models.Model):
         string="Co-Appointees",
         relation="rel_appointment_schedule_2_users",
         column1="schedule_id",
-        column2="type_id",
+        column2="user_id",
         required=False,
     )
 
