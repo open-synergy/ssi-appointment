@@ -101,7 +101,7 @@ class AppointmentSchedule(models.Model):
     def _create_host(self):
         self.ensure_one()
         Task = self.env["project.task"]
-        if not self.auto_create_task:
+        if not self.auto_create_task and self.host_id:
             return True
 
         task = Task.create(self._prepare_create_host())
