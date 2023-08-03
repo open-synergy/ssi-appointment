@@ -18,10 +18,10 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
-[ssi_appointment](ssi_appointment/) | 14.0.1.4.0 |  | Appointment
-[ssi_appointment_project](ssi_appointment_project/) | 14.0.1.4.1 |  | Appointment - Integration With Project
-[ssi_appointment_request](ssi_appointment_request/) | 14.0.1.2.0 |  | Appointment Request
-[ssi_appointment_schedule_state_change_constrain](ssi_appointment_schedule_state_change_constrain/) | 14.0.1.0.0 |  | Appointment Schedule + State Change Constrain Integration
+[ssi_appointment](ssi_appointment/) | 14.0.1.5.0 |  | Appointment
+[ssi_appointment_project](ssi_appointment_project/) | 14.0.1.5.0 |  | Appointment - Integration With Project
+[ssi_appointment_request](ssi_appointment_request/) | 14.0.1.3.0 |  | Appointment Request
+[ssi_appointment_schedule_state_change_constrain](ssi_appointment_schedule_state_change_constrain/) | 14.0.1.1.0 |  | Appointment Schedule + State Change Constrain Integration
 
 [//]: # (end addons)
 
