@@ -1,6 +1,6 @@
 # Copyright 2022 OpenSynergy Indonesia
 # Copyright 2022 PT. Simetri Sinergi Indonesia
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, fields, models
 from odoo.exceptions import ValidationError
@@ -101,7 +101,7 @@ class AppointmentSchedule(models.Model):
     def _create_host(self):
         self.ensure_one()
         Task = self.env["project.task"]
-        if not self.auto_create_task:
+        if not self.auto_create_task and self.host_id:
             return True
 
         task = Task.create(self._prepare_create_host())
