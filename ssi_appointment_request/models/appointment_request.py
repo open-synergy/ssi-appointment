@@ -33,6 +33,8 @@ class AppointmentRequest(models.Model):
 
     _policy_field_order = [
         "confirm_ok",
+        "approve_ok",
+        "reject_ok",
         "open_ok",
         "restart_approval_ok",
         "cancel_ok",
@@ -57,6 +59,7 @@ class AppointmentRequest(models.Model):
         "dom_done",
         "dom_terminate",
         "dom_cancel",
+        "dom_reject",
     ]
 
     _create_sequence_state = "open"
@@ -194,6 +197,7 @@ class AppointmentRequest(models.Model):
             ("open", "Waiting for Schedule"),
             ("done", "Schedule"),
             ("cancel", "Cancelled"),
+            ("reject", "Rejected"),
         ],
         copy=False,
         default="draft",
