@@ -215,6 +215,11 @@
                             t-field="appointment_schedule.appointee_id"
                         />
                     </div>
+                    <div class="mb-1">
+                        <strong>Video Link:</strong> <span>
+                            <a t-attf-href="{{appointment_schedule.appointment_video_link}}" target="_blank"><t t-esc="appointment_schedule.appointment_video_link"/></a>
+                        </span>
+                    </div>
                 </t>
             </t>
             <div class="mt32">
