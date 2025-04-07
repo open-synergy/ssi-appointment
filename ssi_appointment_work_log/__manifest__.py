@@ -13,7 +13,9 @@
         "ssi_appointment",
         "ssi_work_log_mixin",
     ],
-    "data": [],
+    "data": [
+        "views/appointment_type_views.xml",
+    ],
     "demo": [],
     "images": [],
 }
