@@ -23,7 +23,7 @@ addon | version | maintainers | summary
 [ssi_appointment_request](ssi_appointment_request/) | 14.0.1.4.0 |  | Appointment Request
 [ssi_appointment_request_work_log](ssi_appointment_request_work_log/) | 14.0.1.0.0 |  | Appointment Request - Work Log Integration
 [ssi_appointment_schedule_state_change_constrain](ssi_appointment_schedule_state_change_constrain/) | 14.0.1.1.0 |  | Appointment Schedule + State Change Constrain Integration
-[ssi_appointment_work_log](ssi_appointment_work_log/) | 14.0.1.0.0 |  | Appointment - Work Log Integration
+[ssi_appointment_work_log](ssi_appointment_work_log/) | 14.0.1.1.0 |  | Appointment - Work Log Integration
 
 [//]: # (end addons)
 
