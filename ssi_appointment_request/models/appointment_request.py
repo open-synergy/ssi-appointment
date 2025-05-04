@@ -118,7 +118,6 @@ class AppointmentRequest(models.Model):
         states={
             "open": [
                 ("readonly", False),
-                ("required", True),
             ],
         },
     )
@@ -173,7 +172,6 @@ class AppointmentRequest(models.Model):
         states={
             "open": [
                 ("readonly", False),
-                ("required", True),
             ],
         },
     )
