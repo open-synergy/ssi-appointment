@@ -6,7 +6,10 @@
     "name": "Appointment Schedule + State Change Constrain Integration",
     "version": "14.0.1.1.0",
     "website": "https://simetri-sinergi.id",
-    "author": "OpenSynergy Indonesia, PT. Simetri Sinergi Indonesia",
+    "author": (
+        "OpenSynergy Indonesia, PT. Simetri Sinergi Indonesia,"
+        " Odoo Community Association (OCA)"
+    ),
     "license": "AGPL-3",
     "installable": True,
     "application": True,
