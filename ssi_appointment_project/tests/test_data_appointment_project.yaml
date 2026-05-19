@@ -1,0 +1,94 @@
+scenarios:
+  - name: "Appointment Schedule Project - Create and Check Fields"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "09:00 - 10:00 Proj"
+          code: "TSPRJ0900"
+          time_start: 9.0
+          time_end: 10.0
+
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Project Test Type"
+          code: "PTT"
+
+      - step: "Create schedule without project"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "Project Test Schedule"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          date: 2026-12-25
+          appointment_method: "online"
+          auto_create_task: false
+
+      - step: "Assert schedule created"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          auto_create_task:
+            type: "value"
+            expected: false
+
+      - step: "Call action_create_task (no-op since auto_create_task=False)"
+        action: "call"
+        target: "schedule"
+        method: "action_create_task"
+
+      - step: "Assert no task created"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          task_id:
+            type: "value"
+            operator: "is_falsy"
+
+      - step: "Call action_delete_task (no-op since no task)"
+        action: "call"
+        target: "schedule"
+        method: "action_delete_task"
+
+      - step: "Assert still no task"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          task_id:
+            type: "value"
+            operator: "is_falsy"
+
+  - name: "Appointment Type Project Fields"
+    steps:
+      - step: "Create appointment type with project fields"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Project Type Fields"
+          code: "PTF"
+
+      - step: "Assert type created"
+        action: "assert"
+        target: "appt_type"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          task_type_id:
+            type: "value"
+            operator: "is_falsy"
+          task_stage_id:
+            type: "value"
+            operator: "is_falsy"

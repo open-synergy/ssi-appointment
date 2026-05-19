@@ -1,0 +1,89 @@
+scenarios:
+  - name: "Create Appointment Type"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "type_record"
+        values:
+          name: "Test Appointment Type"
+          code: "TAT"
+      - step: "Assert created"
+        action: "assert"
+        target: "type_record"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Test Appointment Type"
+          code:
+            type: "value"
+            expected: "TAT"
+
+  - name: "Create Appointment Type with Allowed Appointees"
+    steps:
+      - step: "Create appointment type with appointees"
+        action: "create"
+        model: "appointment_type"
+        save_as: "type_record"
+        values:
+          name: "Consultation Type"
+          code: "CONS"
+          allowed_appointee_ids:
+            - - 4
+              - "REF: base.user_admin"
+      - step: "Assert type created"
+        action: "assert"
+        target: "type_record"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Consultation Type"
+
+  - name: "Edit Appointment Type"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "type_record"
+        values:
+          name: "Original Type"
+          code: "OT"
+      - step: "Write new name"
+        action: "write"
+        target: "type_record"
+        values:
+          name: "Updated Type"
+      - step: "Assert name updated"
+        action: "assert"
+        target: "type_record"
+        asserts:
+          name:
+            type: "value"
+            expected: "Updated Type"
+
+  - name: "Delete Appointment Type"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "type_record"
+        values:
+          name: "Delete Me"
+          code: "DEL"
+      - step: "Delete record"
+        action: "call"
+        target: "type_record"
+        method: "unlink"
+      - step: "Verify deleted"
+        action: "search"
+        model: "appointment_type"
+        domain:
+          - ["code", "=", "DEL"]
+        save_as: "result"
+        expect_count: 0

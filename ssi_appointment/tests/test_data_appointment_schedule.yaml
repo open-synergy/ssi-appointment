@@ -1,0 +1,199 @@
+scenarios:
+  - name: "Create Appointment Schedule - Draft State"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "09:00 - 10:00"
+          code: "SCH0900"
+          time_start: 9.0
+          time_end: 10.0
+      - step: "Create schedule in draft"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "Test Appointment"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          date: 2026-12-01
+          appointment_method: "online"
+      - step: "Assert draft state"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          title:
+            type: "value"
+            expected: "Test Appointment"
+          appointment_method:
+            type: "value"
+            expected: "online"
+
+  - name: "Appointment Schedule - Full Workflow draft to done"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "10:00 - 11:00"
+          code: "SCH1000"
+          time_start: 10.0
+          time_end: 11.0
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Full Workflow Type"
+          code: "FWT"
+      - step: "Create schedule in draft"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "Full Workflow Test"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          type_ids:
+            - - 4
+              - "EVAL: registry['appt_type'].id"
+          type_id: "EVAL: registry['appt_type'].id"
+          date: 2026-12-02
+          appointment_method: "online"
+      - step: "Assert initial state is draft"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+      - step: "Confirm schedule"
+        action: "call"
+        target: "schedule"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+      - step: "Invalidate cache after confirm"
+        action: "call"
+        target: "schedule"
+        method: "invalidate_cache"
+      - step: "Approve schedule"
+        action: "call"
+        target: "schedule"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"
+      - step: "Assert name generated after ready"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          name:
+            type: "value"
+            operator: "is_truthy"
+      - step: "Invalidate cache after ready"
+        action: "call"
+        target: "schedule"
+        method: "invalidate_cache"
+      - step: "Open schedule"
+        action: "call"
+        target: "schedule"
+        method: "action_open"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+      - step: "Invalidate cache after open"
+        action: "call"
+        target: "schedule"
+        method: "invalidate_cache"
+      - step: "Done schedule"
+        action: "call"
+        target: "schedule"
+        method: "action_done"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+
+  - name: "Appointment Schedule - Offline Method"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "14:00 - 15:00"
+          code: "SCH1400"
+          time_start: 14.0
+          time_end: 15.0
+      - step: "Create offline schedule"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "Offline Appointment"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          date: 2026-12-03
+          appointment_method: "offline"
+      - step: "Assert offline method"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          appointment_method:
+            type: "value"
+            expected: "offline"
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Appointment Schedule - With Co-Appointees"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "15:00 - 16:00"
+          code: "SCH1500"
+          time_start: 15.0
+          time_end: 16.0
+      - step: "Create schedule with co-appointees"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "Co-Appointee Test"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          date: 2026-12-04
+          appointment_method: "online"
+          co_appointee_ids:
+            - - 4
+              - "REF: base.user_admin"
+      - step: "Assert co-appointees set"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          co_appointee_ids:
+            type: "m2m"
+            check: "count"
+            expected_count: 1
