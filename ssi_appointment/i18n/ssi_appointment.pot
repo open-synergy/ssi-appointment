@@ -30,6 +30,16 @@ msgid "# Schedule"
 msgstr ""
 
 #. module: ssi_appointment
+#: model:appointment_time_slot,name:ssi_appointment.demo_time_slot1
+msgid "08.30 to 10.00 - (test)"
+msgstr ""
+
+#. module: ssi_appointment
+#: model:appointment_time_slot,name:ssi_appointment.demo_time_slot2
+msgid "10.00 to 11.30 - (test)"
+msgstr ""
+
+#. module: ssi_appointment
 #: model_terms:ir.ui.view,arch_db:ssi_appointment.portal_my_appointment_schedule
 msgid "<small class=\"text-right\">Status:</small>"
 msgstr ""
@@ -570,6 +580,11 @@ msgid "Font awesome icon e.g. fa-tasks"
 msgstr ""
 
 #. module: ssi_appointment
+#: model:appointment_type,name:ssi_appointment.demo_appointment_type1
+msgid "Functional Consultation - (test)"
+msgstr ""
+
+#. module: ssi_appointment
 #: model:ir.model.fields,field_description:ssi_appointment.field_appointment_schedule__host_id
 msgid "Host"
 msgstr ""
@@ -892,6 +907,11 @@ msgid "Result"
 msgstr ""
 
 #. module: ssi_appointment
+#: model:ir.model.fields,field_description:ssi_appointment.field_appointment_schedule__reviewer_id
+msgid "Reviewer"
+msgstr ""
+
+#. module: ssi_appointment
 #: model:ir.ui.menu,name:ssi_appointment.appointment_schedule_menu
 msgid "Schedules"
 msgstr ""
@@ -938,6 +958,11 @@ msgid ""
 "Overdue: Due date is already passed\n"
 "Today: Activity date is today\n"
 "Planned: Future activities."
+msgstr ""
+
+#. module: ssi_appointment
+#: model:appointment_type,name:ssi_appointment.demo_appointment_type2
+msgid "Technical Consultation - (test)"
 msgstr ""
 
 #. module: ssi_appointment
@@ -1045,6 +1070,14 @@ msgid ""
 "* Create user can be different with responsible user\n"
 "* Automatically filled with user that initiate document creation.\n"
 "  Default responsible can be changed."
+msgstr ""
+
+#. module: ssi_appointment
+#: model:ir.model.fields,help:ssi_appointment.field_appointment_schedule__reviewer_id
+msgid ""
+"User that responsible to review document\n"
+"\n"
+"* Unless it configured to approve reviewer does not equal to approver"
 msgstr ""
 
 #. module: ssi_appointment
