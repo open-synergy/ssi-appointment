@@ -1,0 +1,60 @@
+scenarios:
+  - name: "Appointment Schedule State Change Constrain - Create and Workflow"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "09:00 - 10:00 SCC"
+          code: "TSSCC0900"
+          time_start: 9.0
+          time_end: 10.0
+
+      - step: "Create schedule"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "State Change Constrain Test"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          date: 2026-12-28
+          appointment_method: "online"
+
+      - step: "Assert schedule created with constrain mixin"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          state:
+            type: "value"
+            expected: "draft"
+
+      - step: "Confirm schedule"
+        action: "call"
+        target: "schedule"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Invalidate cache after confirm"
+        action: "call"
+        target: "schedule"
+        method: "invalidate_cache"
+
+      - step: "Approve schedule"
+        action: "call"
+        target: "schedule"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "ready"

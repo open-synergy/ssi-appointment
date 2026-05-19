@@ -1,0 +1,211 @@
+scenarios:
+  - name: "Create Appointment Request - Draft State"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Test Request Type"
+          code: "TRT"
+          request_date_offset: 2
+
+      - step: "Create company partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "company"
+        values:
+          name: "Test Company AR"
+          is_company: true
+
+      - step: "Create contact partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "contact"
+        values:
+          name: "Test Contact AR"
+          is_company: false
+          parent_id: "EVAL: registry['company'].id"
+
+      - step: "Create appointment request in draft"
+        action: "create"
+        model: "appointment_request"
+        save_as: "request"
+        as_user: "base.user_admin"
+        values:
+          title: "Test Request"
+          partner_id: "EVAL: registry['contact'].id"
+          type_id: "EVAL: registry['appt_type'].id"
+          date: 2026-12-01
+          date_offset: 2
+          appointment_method: "online"
+
+      - step: "Assert draft state"
+        action: "assert"
+        target: "request"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+          title:
+            type: "value"
+            expected: "Test Request"
+
+  - name: "Appointment Request - Full Workflow draft to done"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Full Workflow Request Type"
+          code: "FWRT"
+          request_date_offset: 1
+
+      - step: "Create company partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "company"
+        values:
+          name: "Test Company FW"
+          is_company: true
+
+      - step: "Create contact partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "contact"
+        values:
+          name: "Test Contact FW"
+          is_company: false
+          parent_id: "EVAL: registry['company'].id"
+
+      - step: "Create appointment request"
+        action: "create"
+        model: "appointment_request"
+        save_as: "request"
+        as_user: "base.user_admin"
+        values:
+          title: "Full Workflow Request"
+          partner_id: "EVAL: registry['contact'].id"
+          type_id: "EVAL: registry['appt_type'].id"
+          date: 2026-12-05
+          date_offset: 1
+          appointment_method: "online"
+
+      - step: "Assert initial state is draft"
+        action: "assert"
+        target: "request"
+        asserts:
+          state:
+            type: "value"
+            expected: "draft"
+
+      - step: "Confirm request"
+        action: "call"
+        target: "request"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "confirm"
+
+      - step: "Invalidate cache after confirm"
+        action: "call"
+        target: "request"
+        method: "invalidate_cache"
+
+      - step: "Approve request"
+        action: "call"
+        target: "request"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+      - step: "Invalidate cache after open"
+        action: "call"
+        target: "request"
+        method: "invalidate_cache"
+
+      - step: "Done request"
+        action: "call"
+        target: "request"
+        method: "action_done"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "done"
+
+  - name: "Appointment Request - Compute Allowed Appointments"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Compute Test Type"
+          code: "CTT"
+          request_date_offset: 0
+
+      - step: "Create company partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "company"
+        values:
+          name: "Test Company Compute"
+          is_company: true
+
+      - step: "Create contact partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "contact"
+        values:
+          name: "Test Contact Compute"
+          is_company: false
+          parent_id: "EVAL: registry['company'].id"
+
+      - step: "Create appointment request"
+        action: "create"
+        model: "appointment_request"
+        save_as: "request"
+        as_user: "base.user_admin"
+        values:
+          title: "Compute Test Request"
+          partner_id: "EVAL: registry['contact'].id"
+          type_id: "EVAL: registry['appt_type'].id"
+          date: 2026-12-10
+          date_offset: 0
+          appointment_method: "online"
+
+      - step: "Confirm request"
+        action: "call"
+        target: "request"
+        method: "action_confirm"
+        as_user: "base.user_admin"
+
+      - step: "Invalidate cache"
+        action: "call"
+        target: "request"
+        method: "invalidate_cache"
+
+      - step: "Approve request to get to open state"
+        action: "call"
+        target: "request"
+        method: "action_approve_approval"
+        as_user: "base.user_admin"
+        asserts:
+          state:
+            type: "value"
+            expected: "open"
+
+      - step: "Assert allowed_appointment_ids computed (may be empty)"
+        action: "assert"
+        target: "request"
+        asserts:
+          state:
+            type: "value"
+            expected: "open"

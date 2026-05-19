@@ -1,0 +1,52 @@
+scenarios:
+  - name: "Appointment Request Work Log - Create and Verify"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Request Work Log Type"
+          code: "RWLT"
+          request_date_offset: 1
+
+      - step: "Create company partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "company"
+        values:
+          name: "Test Company ARWL"
+          is_company: true
+
+      - step: "Create contact partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "contact"
+        values:
+          name: "Test Contact ARWL"
+          is_company: false
+          parent_id: "EVAL: registry['company'].id"
+
+      - step: "Create appointment request with work log support"
+        action: "create"
+        model: "appointment_request"
+        save_as: "request"
+        as_user: "base.user_admin"
+        values:
+          title: "Work Log Request"
+          partner_id: "EVAL: registry['contact'].id"
+          type_id: "EVAL: registry['appt_type'].id"
+          date: 2026-12-20
+          date_offset: 1
+          appointment_method: "online"
+
+      - step: "Assert request created"
+        action: "assert"
+        target: "request"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          state:
+            type: "value"
+            expected: "draft"

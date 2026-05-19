@@ -1,0 +1,99 @@
+scenarios:
+  - name: "Create Appointment Time Slot"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "slot"
+        values:
+          name: "09:00 - 10:00"
+          code: "TS0900"
+          time_start: 9.0
+          time_end: 10.0
+      - step: "Assert created"
+        action: "assert"
+        target: "slot"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "09:00 - 10:00"
+          time_start:
+            type: "value"
+            expected: 9.0
+          time_end:
+            type: "value"
+            expected: 10.0
+
+  - name: "Create Appointment Time Slot with Sequence"
+    steps:
+      - step: "Create time slot with custom sequence"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "slot"
+        values:
+          name: "14:00 - 15:00"
+          code: "TS1400"
+          time_start: 14.0
+          time_end: 15.0
+          sequence: 20
+      - step: "Assert sequence set"
+        action: "assert"
+        target: "slot"
+        asserts:
+          sequence:
+            type: "value"
+            expected: 20
+
+  - name: "Edit Appointment Time Slot"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "slot"
+        values:
+          name: "10:00 - 11:00"
+          code: "TS1000"
+          time_start: 10.0
+          time_end: 11.0
+      - step: "Write new time_end"
+        action: "write"
+        target: "slot"
+        values:
+          time_end: 11.5
+          name: "10:00 - 11:30"
+      - step: "Assert updated"
+        action: "assert"
+        target: "slot"
+        asserts:
+          time_end:
+            type: "value"
+            expected: 11.5
+          name:
+            type: "value"
+            expected: "10:00 - 11:30"
+
+  - name: "Delete Appointment Time Slot"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "slot"
+        values:
+          name: "Delete Slot"
+          code: "TSDEL"
+          time_start: 13.0
+          time_end: 14.0
+      - step: "Delete record"
+        action: "call"
+        target: "slot"
+        method: "unlink"
+      - step: "Verify deleted"
+        action: "search"
+        model: "appointment_time_slot"
+        domain:
+          - ["name", "=", "Delete Slot"]
+        save_as: "result"
+        expect_count: 0

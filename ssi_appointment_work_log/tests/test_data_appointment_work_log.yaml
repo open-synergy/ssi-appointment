@@ -1,0 +1,64 @@
+scenarios:
+  - name: "Appointment Schedule Work Log - Create and Verify"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "09:00 - 10:00 WL"
+          code: "TSWL0900"
+          time_start: 9.0
+          time_end: 10.0
+
+      - step: "Create appointment type with analytic accounts"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Work Log Test Type"
+          code: "WLT"
+
+      - step: "Create appointment schedule"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "schedule"
+        as_user: "base.user_admin"
+        values:
+          title: "Work Log Test Schedule"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "EVAL: registry['time_slot'].id"
+          date: 2026-12-15
+          appointment_method: "online"
+
+      - step: "Assert schedule created with work log support"
+        action: "assert"
+        target: "schedule"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          state:
+            type: "value"
+            expected: "draft"
+
+  - name: "Appointment Type Work Log - Analytic Fields"
+    steps:
+      - step: "Create appointment type with work log settings"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Analytic Work Log Type"
+          code: "AWLT"
+
+      - step: "Assert type created"
+        action: "assert"
+        target: "appt_type"
+        asserts:
+          id:
+            type: "value"
+            operator: "is_truthy"
+          name:
+            type: "value"
+            expected: "Analytic Work Log Type"

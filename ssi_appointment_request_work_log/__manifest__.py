@@ -6,11 +6,15 @@
     "name": "Appointment Request - Work Log Integration",
     "version": "14.0.1.0.0",
     "website": "https://simetri-sinergi.id",
-    "author": "PT. Simetri Sinergi Indonesia, OpenSynergy Indonesia",
+    "author": (
+        "OpenSynergy Indonesia, PT. Simetri Sinergi Indonesia,"
+        " Odoo Community Association (OCA)"
+    ),
     "license": "AGPL-3",
     "installable": True,
     "depends": [
         "ssi_appointment",
+        "ssi_appointment_request",
         "ssi_work_log_mixin",
     ],
     "data": [],
