@@ -18,7 +18,7 @@ Available addons
 ----------------
 addon | version | maintainers | summary
 --- | --- | --- | ---
-[ssi_appointment](ssi_appointment/) | 14.0.1.8.0 |  | Appointment
+[ssi_appointment](ssi_appointment/) | 14.0.1.9.0 |  | Appointment
 [ssi_appointment_project](ssi_appointment_project/) | 14.0.1.7.0 |  | Appointment - Integration With Project
 [ssi_appointment_request](ssi_appointment_request/) | 14.0.1.6.0 |  | Appointment Request
 [ssi_appointment_request_work_log](ssi_appointment_request_work_log/) | 14.0.1.1.0 |  | Appointment Request - Work Log Integration
