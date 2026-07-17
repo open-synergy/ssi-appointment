@@ -9,6 +9,7 @@ setuptools.setup(
     version=version,
     install_requires=[
         'odoo14-addon-ssi_appointment',
+        'odoo14-addon-ssi_appointment_operating_unit',
         'odoo14-addon-ssi_appointment_project',
         'odoo14-addon-ssi_appointment_request',
         'odoo14-addon-ssi_appointment_request_work_log',
