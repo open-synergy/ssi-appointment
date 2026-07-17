@@ -1,0 +1,240 @@
+scenarios:
+  - name: "Create Appointment Schedule with Operating Unit"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "11:00 - 12:00"
+          code: "OUSCH1100"
+          time_start: 11.0
+          time_end: 12.0
+
+      - step: "Create appointment_schedule with operating_unit_id"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "record"
+        as_user: "base.user_admin"
+        values:
+          title: "Test Appointment Schedule OU"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "REC: time_slot.id"
+          date: 2026-12-10
+          appointment_method: "online"
+          operating_unit_id: "REF: operating_unit.main_operating_unit"
+
+      - step: "Assert operating_unit_id is set"
+        action: "assert"
+        target: "record"
+        asserts:
+          operating_unit_id:
+            type: "value"
+            operator: "is_truthy"
+
+  - name: "Create Appointment Request with Operating Unit"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Test Request Type OU 1"
+          code: "OURT1"
+
+      - step: "Create company partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "req_company"
+        values:
+          name: "OU Request Company 1"
+          is_company: true
+
+      - step: "Create contact partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "req_contact"
+        values:
+          name: "OU Request Contact 1"
+          is_company: false
+          parent_id: "REC: req_company.id"
+
+      - step: "Create appointment_request with operating_unit_id"
+        action: "create"
+        model: "appointment_request"
+        save_as: "record"
+        as_user: "base.user_admin"
+        values:
+          title: "Test Appointment Request OU"
+          partner_id: "REC: req_contact.id"
+          type_id: "REC: appt_type.id"
+          date: 2026-12-10
+          date_offset: 1
+          appointment_method: "online"
+          operating_unit_id: "REF: operating_unit.main_operating_unit"
+
+      - step: "Assert operating_unit_id is set"
+        action: "assert"
+        target: "record"
+        asserts:
+          operating_unit_id:
+            type: "value"
+            operator: "is_truthy"
+
+  - name: "User without operating unit access cannot read or write appointment_schedule"
+    steps:
+      - step: "Create time slot"
+        action: "create"
+        model: "appointment_time_slot"
+        save_as: "time_slot"
+        values:
+          name: "12:00 - 13:00"
+          code: "OUSCH1200"
+          time_start: 12.0
+          time_end: 13.0
+
+      - step: "Create restricted operating unit"
+        action: "create"
+        model: "operating.unit"
+        save_as: "ou_restricted"
+        values:
+          name: "OU Restricted Test Appointment Schedule"
+          code: "OURESTRICTEDTESTAS"
+          partner_id: "REC: company.partner_id.id"
+
+      - step: "Create user without access to main operating unit"
+        action: "create"
+        model: "res.users"
+        save_as: "restricted_user"
+        values:
+          name: "Restricted OU User Schedule"
+          login: "restricted_ou_user_schedule@example.com"
+          groups_id:
+            - - 6
+              - 0
+              - - "REF: base.group_user"
+                - "REF: ssi_appointment.appointment_schedule_user_group"
+                - "REF: ssi_appointment_operating_unit.appointment_schedule_ou_group"
+          assigned_operating_unit_ids:
+            - - 6
+              - 0
+              - - "REC: ou_restricted.id"
+
+      - step: "Create appointment_schedule with main operating unit"
+        action: "create"
+        model: "appointment_schedule"
+        save_as: "record"
+        as_user: "base.user_admin"
+        values:
+          title: "Test Appointment Schedule OU Restricted"
+          appointee_id: "REF: base.user_admin"
+          time_slot_id: "REC: time_slot.id"
+          date: 2026-12-11
+          appointment_method: "online"
+          operating_unit_id: "REF: operating_unit.main_operating_unit"
+
+      - step: "Restricted user cannot read the record"
+        action: "call"
+        target: "record"
+        method: "read"
+        args:
+          - - "title"
+        as_user: "restricted_user"
+        expect_error:
+          type: "AccessError"
+
+      - step: "Restricted user cannot write the record"
+        action: "write"
+        target: "record"
+        as_user: "restricted_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          title: "Hacked Title"
+
+  - name: "User without operating unit access cannot read or write appointment_request"
+    steps:
+      - step: "Create appointment type"
+        action: "create"
+        model: "appointment_type"
+        save_as: "appt_type"
+        values:
+          name: "Test Request Type OU 2"
+          code: "OURT2"
+
+      - step: "Create company partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "req_company"
+        values:
+          name: "OU Request Company 2"
+          is_company: true
+
+      - step: "Create contact partner"
+        action: "create"
+        model: "res.partner"
+        save_as: "req_contact"
+        values:
+          name: "OU Request Contact 2"
+          is_company: false
+          parent_id: "REC: req_company.id"
+
+      - step: "Create restricted operating unit"
+        action: "create"
+        model: "operating.unit"
+        save_as: "ou_restricted"
+        values:
+          name: "OU Restricted Test Appointment Request"
+          code: "OURESTRICTEDTESTAR"
+          partner_id: "REC: company.partner_id.id"
+
+      - step: "Create user without access to main operating unit"
+        action: "create"
+        model: "res.users"
+        save_as: "restricted_user"
+        values:
+          name: "Restricted OU User Request"
+          login: "restricted_ou_user_request@example.com"
+          groups_id:
+            - - 6
+              - 0
+              - - "REF: base.group_user"
+                - "REF: ssi_appointment_request.appointment_request_user_group"
+                - "REF: ssi_appointment_operating_unit.appointment_request_ou_group"
+          assigned_operating_unit_ids:
+            - - 6
+              - 0
+              - - "REC: ou_restricted.id"
+
+      - step: "Create appointment_request with main operating unit"
+        action: "create"
+        model: "appointment_request"
+        save_as: "record"
+        as_user: "base.user_admin"
+        values:
+          title: "Test Appointment Request OU Restricted"
+          partner_id: "REC: req_contact.id"
+          type_id: "REC: appt_type.id"
+          date: 2026-12-11
+          date_offset: 1
+          appointment_method: "online"
+          operating_unit_id: "REF: operating_unit.main_operating_unit"
+
+      - step: "Restricted user cannot read the record"
+        action: "call"
+        target: "record"
+        method: "read"
+        args:
+          - - "title"
+        as_user: "restricted_user"
+        expect_error:
+          type: "AccessError"
+
+      - step: "Restricted user cannot write the record"
+        action: "write"
+        target: "record"
+        as_user: "restricted_user"
+        expect_error:
+          type: "AccessError"
+        values:
+          title: "Hacked Title"
